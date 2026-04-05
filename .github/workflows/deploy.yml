@@ -1,0 +1,31 @@
+name: "Build and Push Docker Image"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    name: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the source code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Log in to Docker Hub to allow pushing the image
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Build the Docker image and push it to the Docker Hub registry
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-cicd-app:latest
